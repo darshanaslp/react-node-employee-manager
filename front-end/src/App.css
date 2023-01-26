@@ -1,0 +1,29 @@
+input.input-error,
+select.input-error {
+  border-color: #fc8181;
+}
+
+button:disabled {
+  opacity: 0.35;
+}
+
+.error {
+  color: #fc8181;
+}
+
+.card-style {
+  width: 14rem;
+}
+
+.card-style2 {
+  max-width: 140px;
+}
+
+a {
+  color: #fff !important;
+  text-decoration: none !important;
+}
+
+.nav-color {
+  background-color: rgb(197, 8, 197) !important;
+}
