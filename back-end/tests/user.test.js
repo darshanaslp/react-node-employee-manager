@@ -1,10 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert'
 import { promisify } from 'node:util'
-test('Hero Integration Test Suite', async (t) => {
+test('User Post Testing', async (t) => {
   const testPort = 5000
-
-  // that's bad practice because it mutates the environment
   process.env.PORT = testPort
   const { server } = await import('../../src/index.js')
   
