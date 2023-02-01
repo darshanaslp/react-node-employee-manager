@@ -1,7 +1,7 @@
 import User from "../models/UserModel.js";
 
 //get all users
-export const getUsers = async(req, res) =>{
+export const getUsers = async (req, res) => {
     try {
         const response = await User.findAll();
         res.status(200).json(response);
@@ -12,10 +12,10 @@ export const getUsers = async(req, res) =>{
 }
 
 //get single user
-export const getUserById = async(req, res) =>{
+export const getUserById = async (req, res) => {
     try {
         const response = await User.findOne({
-            where:{
+            where: {
                 id: req.params.id
             }
         });
@@ -27,25 +27,28 @@ export const getUserById = async(req, res) =>{
 }
 
 //create user post
-export const createUser = async(req, res) =>{
+export const createUser = async (req, res) => {
     try {
+        const emailExists = await User.findOne({ where: { email: req.body.email } });
+        if (emailExists) {
+            return res.status(400).json({ error: "Email already exists" });
+        }
         await User.create(req.body);
-        res.status(201).json({msg: "User Created"});
+        res.status(201).json({ msg: "User Created" });
     } catch (error) {
-        res.status(400).json(error);
-        console.log(error.message);
+        res.status(500).json({ error: "Internal server error" });
     }
 }
 
 //update user put
-export const updateUser = async(req, res) =>{
+export const updateUser = async (req, res) => {
     try {
-        await User.update(req.body,{
-            where:{
+        await User.update(req.body, {
+            where: {
                 id: req.params.id
             }
         });
-        res.status(200).json({msg: "User Updated"});
+        res.status(200).json({ msg: "User Updated" });
     } catch (error) {
         res.status(400).json(error);
         console.log(error.message);
@@ -53,14 +56,14 @@ export const updateUser = async(req, res) =>{
 }
 
 //delete user using delete
-export const deleteUser = async(req, res) =>{
+export const deleteUser = async (req, res) => {
     try {
         await User.destroy({
-            where:{
+            where: {
                 id: req.params.id
             }
         });
-        res.status(200).json({msg: "User Deleted"});
+        res.status(200).json({ msg: "User Deleted" });
     } catch (error) {
         res.status(400).json(error);
         console.log(error.message);

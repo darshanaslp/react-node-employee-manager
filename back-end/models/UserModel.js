@@ -33,10 +33,6 @@ const User = db.define('users', {
     phone: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        validate: {
-            isNumeric: true,
-            max: 10
-        }
     },
     gender: {
         type: DataTypes.STRING,

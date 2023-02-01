@@ -4,30 +4,35 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from 'formik';
 import { EmployeeSchema } from "../employeeSchema";
 
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { addUsers } from "../redux/action";
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const AddUser = () => {
+  const errorlog = useSelector(state => state.data.error);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   //submit button clicked save details
   const onSubmit = async (values) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      dispatch(addUsers(values))
-      toast.success("Successfully Add Emplloyee !", {
+      await dispatch(addUsers(values))
+      toast.success("Successfully Add Employee!", {
         position: toast.POSITION.TOP_CENTER
       });
-      navigate("/");
     } catch (error) {
-      toast.error("Error Emplloyee Add !", {
-        position: toast.POSITION.TOP_CENTER
-      });
-      console.log(error);
+      if (error.response.data && error.response.data.error) {
+        toast.error(`${error.response.data.error}`, {
+          position: toast.POSITION.TOP_CENTER
+        });
+      } else {
+        toast.error("An error occurred", {
+          position: toast.POSITION.TOP_CENTER
+        });
+      }
+      console.error(error);
     }
   };
 

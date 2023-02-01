@@ -3,6 +3,7 @@ const initialState = {
     users: [],
     user: {},
     loading: true,
+    error: null
 }
 
 const usersReducers = (state = initialState, action) => {
@@ -17,17 +18,31 @@ const usersReducers = (state = initialState, action) => {
         case types.DELETE_USERS:
         case types.ADD_USERS:
         case types.EDIT_USERS:
-            return{
+            return {
                 ...state,
-                loading:false
+                loading: false
             }
 
-        case types.GET_SINGLE_USERS:
-            return{
+        case types.USER_ADD_DATA_FAIL:
+            return {
                 ...state,
-                user:action.payload,
-                loading:false
-            }    
+                loading: false,
+                error: action.error,
+              };
+
+        case types.USER_EDIT_DATA_FAIL:
+            return {
+                ...state,
+                loading: false,
+                error: action.error
+            };
+
+        case types.GET_SINGLE_USERS:
+            return {
+                ...state,
+                user: action.payload,
+                loading: false
+            }
 
         default:
             return state;

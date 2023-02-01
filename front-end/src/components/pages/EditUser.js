@@ -10,6 +10,7 @@ import { getSingleUsers, UpdateUsers } from "../redux/action";
 
 
 const EditUser = () => {
+  const errorlog = useSelector(state => state.data.error);
   const [state, setState] = useState({
     fname: "",
     lname: "",
@@ -28,7 +29,7 @@ const EditUser = () => {
   //get single action
   useEffect(() => {
     dispatch(getSingleUsers(id))
-  })
+  }, []);
 
   //update action
   useEffect(() => {
@@ -40,35 +41,40 @@ const EditUser = () => {
   //update details
   const onSubmit = async (values) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
       dispatch(UpdateUsers(values, id))
       toast.success("Successfully Update Emplloyee !", {
         position: toast.POSITION.TOP_CENTER
       });
       navigate("/");
     } catch (error) {
-      toast.error("Error Emplloyee Add !", {
-        position: toast.POSITION.TOP_CENTER
-      });
-      console.log(error);
+      if (error.response.data && error.response.data.error) {
+        toast.error(`${error.response.data.error}`, {
+          position: toast.POSITION.TOP_CENTER
+        });
+      } else {
+        toast.error("An error occurred", {
+          position: toast.POSITION.TOP_CENTER
+        });
+      }
+      console.error(error);
     }
   };
 
 
   const { values, handleBlur, handleChange, handleSubmit, errors, touched, isSubmitting } = useFormik({
     initialValues: {
-      fname: user.fname,
-      lname: user.lname,
-      email: user.email,
-      phone: user.phone,
-      gender: user.gender,
-      picture: user.picture
+      fname: user?.fname || "",
+      lname: user?.lname || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+      gender: user?.gender || "",
+      picture: user?.picture || ""
 
     },
     validationSchema: EmployeeSchema,
     onSubmit
   })
-  console.log(values);
 
   return (
     <div className="container-fluid pb-4">
@@ -128,13 +134,28 @@ const EditUser = () => {
 
             <div className="form-group">
               <label htmlFor="exampleFormControlSelect1">Gender</label>
-              <select
+              {/* <select
                 value={values.gender === "M" ? "M" : "F"} id="gender" onChange={handleChange} onBlur={handleBlur}
                 className={errors.gender && touched.gender ? "input-error form-control" : "form-control"}>
                 <option >Select Gender</option>
                 <option value="M">Male</option>
                 <option value="F">Female</option>
+              </select> */}
+
+              <select
+                value={values.gender === "M" || values.gender === "F" ? values.gender : "Select Gender"}
+                id="gender"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={
+                  errors.gender && touched.gender ? "input-error form-control" : "form-control"
+                }
+              >
+                <option value="">Select Gender</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
               </select>
+
             </div>
 
             <div className="form-group">

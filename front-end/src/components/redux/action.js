@@ -15,16 +15,29 @@ const userAdd = () => ({
     type: types.ADD_USERS
 })
 
+const userDataFail = (error) => {
+    return {
+        type: types.USER_ADD_DATA_FAIL,
+        error: error.response.data.error,
+    };
+};
+
 
 const getUser = (user) => ({
     type: types.GET_SINGLE_USERS,
-    payload:user
+    payload: user
 })
 
 
 const userEdit = () => ({
     type: types.EDIT_USERS
 })
+
+const userEditFail = error => ({
+    type: types.USER_EDIT_DATA_FAIL,
+    error
+});
+
 
 export const loadUsers = () => {
     return function (dispatch) {
@@ -51,14 +64,21 @@ export const deleteUsers = (id) => {
 
 export const addUsers = (user) => {
     return function (dispatch) {
-        axios.post("http://localhost:5000/users", user)
-            .then((res) => {
-                dispatch(userAdd());
-                dispatch(loadUsers());
-            })
-            .catch(error => console.log(error));
-    }
-}
+        return new Promise((resolve, reject) => {
+            axios
+                .post("http://localhost:5000/users", user)
+                .then((res) => {
+                    dispatch(userAdd());
+                    dispatch(loadUsers());
+                    resolve();
+                })
+                .catch((error) => {
+                    dispatch(userDataFail(error));
+                    reject(error);
+                });
+        });
+    };
+};
 
 
 export const getSingleUsers = (id) => {
@@ -72,13 +92,20 @@ export const getSingleUsers = (id) => {
 }
 
 
+
 export const UpdateUsers = (user, id) => {
     return function (dispatch) {
-        axios.patch(`http://localhost:5000/users/${id}`, user)
-            .then((res) => {
-                dispatch(userEdit());
-                dispatch(loadUsers());
-            })
-            .catch(error => console.log(error));
+        return new Promise((resolve, reject) => {
+            axios.patch(`http://localhost:5000/users/${id}`, user)
+                .then((res) => {
+                    dispatch(userEdit());
+                    dispatch(loadUsers());
+                    resolve();
+                })
+                .catch((error) => {
+                    dispatch(userEditFail(error));
+                    reject(error);
+                });
+        });
     }
 }
