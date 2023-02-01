@@ -1,37 +1,52 @@
-
-import {express} from "express";
-import {UserRoute} from "./routes/UserRoute.js";
-
-const app = express();
-
-app.use(express.json());
-
-app.use(UserRoute);
-
-app.listen(5000, ()=> console.log('Server up and running...'));
+const request = require('request');
+const server = require('./index.js');
 
 
-describe("test create route", () => {
-	const todo = {
-		fname: "Create todo",
-    lanme:"eeeeeeee",
-    email:"eerer@grfg.com",
-    phone:"0717848895",
-    gender:"M",
-    picture:"https://randomuser.me/api/portraits/men/31.jpg"
-	};
+describe('User Post Testing', () => {
+  const testPort = 5000;
+  process.env.PORT = testPort;
 
-	test("Should have key record and msg when created", async () => {
-	//	const mockCreateTodo = jest.fn((): any => todo);
-		// jest
-		// 	.spyOn(TodoInstance, "create")
-		// 	.mockImplementation(() => mockCreateTodo());
+  let testServerAddress;
 
-		const res = await request(app).post("/users").send(todo);
+  beforeAll(async done => {
+    testServerAddress = `http://localhost:${testPort}/users`;
+    server.listen(testPort, () => {
+      console.log('Server up and running...');
+      done();
+    });
+  });
 
-		expect(mockCreateTodo).toHaveBeenCalledTimes(1);
-		expect(res.body).toHaveProperty("msg");
-		expect(res.body).toHaveProperty("record");
-	});
+  afterAll(() => {
+    server.close();
+  });
+
+  it('it should create a user', done => {
+    const data = {
+      fname: "Frist Name",
+      lname: "Last Name",
+      email: "example@gmail.com",
+      phone: "07179797979",
+      gender: "M",
+      picture: "https://randomuser.me/test.jpg"
+    };
+
+    request.post({ url: testServerAddress, json: data }, (error, response) => {
+      expect(response.headers['content-type']).toBe('application/json');
+      expect(response.statusCode).toBe(201);
+
+      const result = response.body;
+      expect(result.success).toBe('User created with success!!');
+      done();
+    });
+  });
+
+  it('it should get all users', done => {
+    request.get({ url: testServerAddress, json: true }, (error, response) => {
+      expect(response.headers['content-type']).toBe('application/json');
+      expect(response.statusCode).toBe(200);
+
+      const result = response.body;
+      done();
+    });
+  });
 });
-
