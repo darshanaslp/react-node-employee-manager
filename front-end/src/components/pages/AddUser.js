@@ -22,6 +22,7 @@ const AddUser = () => {
       toast.success("Successfully Add Employee!", {
         position: toast.POSITION.TOP_CENTER
       });
+	   navigate("/");
     } catch (error) {
       if (error.response.data && error.response.data.error) {
         toast.error(`${error.response.data.error}`, {
